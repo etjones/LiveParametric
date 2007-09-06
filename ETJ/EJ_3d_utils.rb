@@ -48,6 +48,7 @@ module EJ
 		list
 	end
 end
+
 def hardenEdges
     sel = Sketchup.active_model.selection
     arr = flattenSU_Obj(sel).find_all{|e| e.class == Sketchup::Edge}
@@ -441,8 +442,8 @@ end
 # ============================================================================
 #  Sketchup menu setup
 # ============================================================================
-if( not file_loaded?(__FILE__) )
-    # add_separator_to_menu("Plugins")
-    UI.menu("Plugins").add_item("Harden Selected Edges") {hardenEdges}
-end
-file_loaded(__FILE__)
+# if( not file_loaded?(__FILE__) )
+#     # add_separator_to_menu("Plugins")
+#     UI.menu("Plugins").add_item("Harden Selected Edges") {hardenEdges}
+# end
+# file_loaded(__FILE__)
