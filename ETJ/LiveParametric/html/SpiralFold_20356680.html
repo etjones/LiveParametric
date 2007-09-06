@@ -1,0 +1,153 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+
+<script src="../javascripts/scriptaculous/prototype.js" type="text/javascript"></script>
+<script src="../javascripts/scriptaculous/slider.js" 	 type="text/javascript"></script>
+		<style type="text/css">
+		/* put the left rounded edge on the track */
+		div.track-left {
+			position: absolute;
+			width: 5px;
+			height: 20px;
+			background: transparent url(../images/slider-images-track-left.png) no-repeat top left;
+		}
+		/* put the track and the right rounded edge on the track */
+		div.track {
+			background: transparent url(../images/slider-images-track-right.png) no-repeat top right;
+		}
+		div.handle {
+			width: 19px;
+			height: 20px;
+			background: url(../images/slider-images-handle.png);
+			float: left;
+			cursor:move;
+		}
+		</style>
+
+
+</head>
+
+
+<body>
+<table border=0 align='center'>
+<tr><td>
+        <table border="0" width=175px align="center">
+        <tr><td align ="left">Sides:</td><td align="right"id="Slider_0">4</td></tr>
+        <tr><td colspan="2">
+        	<div 	 id="Slider_0_slider" 	class="track"  style="width:175px; height:20px">
+       			<div id="Slider_0_left" 	class="track-left"></div>
+       			<div id="Slider_0_handle" 	class="handle" style="float:left"></div>
+       		</div>
+        </td></tr>
+        <tr><td align ="left">3</td><td align="right">12</td></tr>
+        </table>
+
+        <script type="text/javascript" language="javascript">
+        // horizontal slider control
+        new Control.Slider('Slider_0_handle', 'Slider_0_slider', {
+            range: $R(3,12),
+            sliderValue: 4 ,
+            onSlide:  function(v) { 
+			$('Slider_0').innerHTML = v.toFixed(0);
+			did_change('Slider_0', $('Slider_0').innerHTML);
+		}
+,
+            onChange: function(v) { 
+			$('Slider_0').innerHTML = v.toFixed(0);
+			did_change('Slider_0', $('Slider_0').innerHTML);
+		}
+
+        }
+        );
+        </script>
+</td></tr>
+<tr><td>
+        <table border="0" width=175px align="center">
+        <tr><td align ="left">Folds Per Side:</td><td align="right"id="Slider_1">7</td></tr>
+        <tr><td colspan="2">
+        	<div 	 id="Slider_1_slider" 	class="track"  style="width:175px; height:20px">
+       			<div id="Slider_1_left" 	class="track-left"></div>
+       			<div id="Slider_1_handle" 	class="handle" style="float:left"></div>
+       		</div>
+        </td></tr>
+        <tr><td align ="left">3</td><td align="right">25</td></tr>
+        </table>
+
+        <script type="text/javascript" language="javascript">
+        // horizontal slider control
+        new Control.Slider('Slider_1_handle', 'Slider_1_slider', {
+            range: $R(3,25),
+            sliderValue: 7 ,
+            onSlide:  function(v) { 
+			$('Slider_1').innerHTML = v.toFixed(0);
+			did_change('Slider_1', $('Slider_1').innerHTML);
+		}
+,
+            onChange: function(v) { 
+			$('Slider_1').innerHTML = v.toFixed(0);
+			did_change('Slider_1', $('Slider_1').innerHTML);
+		}
+
+        }
+        );
+        </script>
+</td></tr>
+<tr><td>
+        <table border="0" width=175px align="center">
+        <tr><td align ="left">Hole Size:</td><td align="right"id="Slider_2">0.60</td></tr>
+        <tr><td colspan="2">
+        	<div 	 id="Slider_2_slider" 	class="track"  style="width:175px; height:20px">
+       			<div id="Slider_2_left" 	class="track-left"></div>
+       			<div id="Slider_2_handle" 	class="handle" style="float:left"></div>
+       		</div>
+        </td></tr>
+        <tr><td align ="left">0.50</td><td align="right">0.90</td></tr>
+        </table>
+
+        <script type="text/javascript" language="javascript">
+        // horizontal slider control
+        new Control.Slider('Slider_2_handle', 'Slider_2_slider', {
+            range: $R(0.50,0.90),
+            sliderValue: 0.60 ,
+            onSlide:  function(v) { 
+			$('Slider_2').innerHTML = v.toFixed(2);
+			did_change('Slider_2', $('Slider_2').innerHTML);
+		}
+,
+            onChange: function(v) { 
+			$('Slider_2').innerHTML = v.toFixed(2);
+			did_change('Slider_2', $('Slider_2').innerHTML);
+		}
+
+        }
+        );
+        </script>
+</td></tr>
+<tr><td>
+        <table border="0" width=175px height=30 align="left">
+        <tr><td align ="left">
+			<label>
+        	<input type="checkbox" id="Checkbox_3"  onchange = "did_change('Checkbox_3', this.checked);">
+			Tile ?
+        	</label>
+		</td></tr>
+        </table>
+        <br>
+</td></tr>
+<table>
+
+
+		<script language="javascript">
+		function did_change(elementID, elementValue)
+		{
+			window.location='skp:did_change@'+elementID+', '+elementValue;
+		}
+		
+		</script>
+
+</body>
+
+</html>
