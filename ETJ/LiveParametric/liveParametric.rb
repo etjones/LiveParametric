@@ -12,13 +12,15 @@ class LiveParametric < Parametric
 
     # Initialize
     def initialize(*args)
-        data = args[0]
+		data = args[0]
 		
 		if not data
  
             @dict = self.default_dict
+			super(data)
 			@dialog_open = false
-			
+			@dict.update( "dialog_open", @dialog_open)
+			set_attributes( @dict.to_h)
 			Sketchup.file_new if not Sketchup.active_model
             # Launch the WebDialog to control the app
             launchWebDialog()
@@ -27,14 +29,34 @@ class LiveParametric < Parametric
             # the file the subclass is defined in.  Instead, addToPluginsMenu
             # is called in create_entities -- ETJ 29-Jun-2007
             # self.addToPluginsMenu
+		elsif data.kind_of? Sketchup::Entity
+			# get a dictionary from the entity
+			@entity = data
+			@dict = parameterDictFromEntity(@entity)
+			# Check with @entity to see if dialog_open is true
+			@dialog_open = @dict.to_h["dialog_open"]
+			
+			launchWebDialog
         end
-
-        super(data)
     end
 
-	def LiveParametric.current_instance(anID)
-		@@current_instances[anID]
+	def parameterDictFromEntity( entity)
+		d = default_dict
+		LiveParametric.parameters(entity).each_pair { |key, val| d.update(key, val) }
+		d
 	end
+	
+	def LiveParametric.parameters(entity, create_if_needed=false)
+		return nil if not entity
+		attrib_holder = Parametric.attribute_holder(entity)
+		attribs =  attrib_holder ? attrib_holder.attribute_dictionary("skpp", create_if_needed) : nil
+				  
+		return nil if not attribs
+		data = {}
+		attribs.each { |key, value| data[key] = value}
+		data
+	end	
+
 
 	def launchWebDialog
 		return if @dialog_open
@@ -77,28 +99,20 @@ class LiveParametric < Parametric
 		# Remove the html file when the dialog closes so we don't clutter everything up. 
 		dialog.set_on_close{
 			@dialog_open = false
+			@dict.update( "dialog_open", @dialog_open)
+			set_attributes(@dict.to_h)
 			htmlWriter.delete_file
 		}
 	
 		@dialog_open = true
+		@dict.update( "dialog_open", @dialog_open)
+		set_attributes( @dict.to_h)
+		
 		dialog.set_file(htmlWriter.filename, nil)
 		# dialog.set_html(htmlWriter.html)
 		dialog.show
 
 	end
-
-    def addToPluginsMenu( file)
-        if not file_loaded?(file)
-            m = UI.menu("Plugins")
-            m.add_separator
-            m.add_item(self.pluginMenuName) {LiveParametric.editFromDict( )}
-        end
-        file_loaded(file)
-    end
-
-    def pluginMenuName
-        "Update #{self.class}"
-    end
 
     # Parametric asks the user for input,  resulting in a 'data' object.
 	# Supply it here
@@ -111,7 +125,7 @@ class LiveParametric < Parametric
     end
 
     def default_dict
-        # ParameterDict args: ( title, parametricClassName, *variableDicts)
+		# ParameterDict args: ( title, parametricClassName, *variableDicts)
         p = ParameterDict.new( 	self.controller_title,
         					self.class.to_s,
         					self.default_variables
@@ -122,50 +136,12 @@ class LiveParametric < Parametric
     end
   
 	def LiveParametric.dataFromDict( dict)
-		data = dict.to_param_hash
+		data = dict.to_h
 	end
 	
 	def setDict(dict)
 		@dict = dict
 	end
-	
-	#override the method defined in parametric.rb, so that WebDialogs 
-	# can be persistently attached to a single object
-	def Parametric.edit(ent)
-		puts "Parametric.edit defined in LiveParametric called. currentInstances is: #{@@current_instances.keys.join(" ")}"
-	    if( not Parametric.parametric?(ent) )
-	        UI.beep
-	        puts "#{ent} is not a parametric Entity"
-	        return false
-	    end
-
-		# Have we been asked to edit a LiveParametric object?
-		# If the passed in SU entity was formed by an instance of LiveParametric, 
-		# then we want to preserve its current values and just call its associated 
-		# WebDialog.  If not... continue with the normal Parametric behaviors
-		
-		if id = ent.get_attribute("skpp", "unique_ID")
-			if obj = LiveParametric.current_instance(id)
-				obj.launchWebDialog 
-				return
-			end
-		end
-
-	    # Get the class of the parametric object
-	    klass = Parametric.get_class(ent)
-
-	    # Create a new parametric object of that class
-	    new_method = eval "#{klass}.method :new"
-	    obj = new_method.call ent
-	    if not obj
-	        puts "Could not create the parametric object for #{klass}"
-	        return false
-	    end
-
-	    # Now edit the object
-	    obj.edit
-	end
-	
 	
 	def LiveParametric.editFromDict(dict)
 		if not dict
@@ -185,12 +161,7 @@ class LiveParametric < Parametric
 
         klass = data["class_name"]
         new_method = eval "#{klass}.method :new"
-
-		# ETJ DEBUG
-		# entity = nil
-		# puts "LiveParametric.editFromDict:  ent_ID: #{ent_ID}, entity: #{entity} "
-		# END DEBUG
-
+		
         if entity
             # if there's already an entity, edit will replace it with the new version
             obj = new_method.call entity
