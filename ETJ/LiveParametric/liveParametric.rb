@@ -60,15 +60,14 @@ class LiveParametric < Parametric
 
 	def launchWebDialog
 		return if @dialog_open
+        
+        # Make a directory called html in the same directory as this file, 
+		# and write our HTML there.
+        htmlDir = File.join( File.dirname(__FILE__), "html")
+        Dir.mkdir( htmlDir) if not File.exist? htmlDir
 		
-		# puts "in LiveParametric.initialize: #{@dict.variableDicts} variableDicts is nil before"
-        # Create the html code that will run the WebDialog.
-		#TODO htmlFilename should have a unique identifier that's linked this run so multiple instances don't confuse it.
-		fileArr = ["ETJ","LiveParametric","html", "#{self.class}_#{@dict.unique_ID}.html"]
-		htmlFilename = File.join( EJ::plugins, *fileArr )
+		htmlFilename = File.join( htmlDir, "#{self.class}_#{@dict.unique_ID}.html")
         htmlWriter = LiveParametricHTMLWriter.new( @dict, htmlFilename)
-
-		# return nil if @dialog_open or (htmlWriter.filename.length == 0)
 			
 		#Create the web dialog
 		scrollable = true
