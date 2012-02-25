@@ -81,7 +81,7 @@ EOS
 		<script language="javascript">
 		function did_change(elementID, elementValue)
 		{
-			window.location='skp:did_change@'+elementID+', '+elementValue;
+			window.location='skp:did_change@'+elementID+','+elementValue;
 		}
 		
 		</script>
