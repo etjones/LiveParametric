@@ -24,10 +24,10 @@ class CubeStack < LiveParametric
 		g = container.add_group
 		
 		f = g.entities.add_face([0,0,0], [w,0,0], [w,d,0], [0,d,0])
-		f.pushpull(h)
+		f.pushpull(-h)
 		
-		(numBlocks-1).times{|i|
-			newG = g.copy.make_unique
+		1.upto(numBlocks-1){|i|
+			newG = g.copy
 			lift = Geom::Transformation.new([0,0,h*i])
 			rotate = Geom::Transformation.rotation([0,0,0],[0,0,1], rotationAngle*i)
 			newG.transform!(lift*rotate)
