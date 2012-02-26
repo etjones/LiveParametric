@@ -13,8 +13,8 @@ Google's Ruby examples include a parametric model called OnionDome. By supplying
         <td align="center">LiveParametric</td>
     <tr>
     <tr>
-        <td align="center"><img width="300" alt="Original"       src="http://github.com/etjones/LiveParametric/blob/master/ETJ/Documentation/OnionDomeOrig.png?raw=true"></td>
-        <td align="center"><img width="300" alt="LiveParametric" src="http://github.com/etjones/LiveParametric/blob/master/ETJ/Documentation/OnionDomeLP.png?raw=true"></td>
+        <td align="center"><img width="350" alt="Original"       src="http://github.com/etjones/LiveParametric/blob/master/ETJ/Documentation/OnionDomeOrig.png?raw=true"></td>
+        <td align="center"><img width="350" alt="LiveParametric" src="http://github.com/etjones/LiveParametric/blob/master/ETJ/Documentation/OnionDomeLP.png?raw=true"></td>
     </tr>
 </table>
 

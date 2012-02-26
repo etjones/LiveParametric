@@ -9,7 +9,6 @@ include EJ
 class LiveParametric < Parametric
     @@current_instances = {}
 
-
     # Initialize
     def initialize(*args)
         data = args[0]
@@ -100,7 +99,11 @@ class LiveParametric < Parametric
         dialog.set_on_close{
             @dialog_open = false
             @dict.update( "dialog_open", @dialog_open)
-            set_attributes(@dict.to_h)
+            begin
+                set_attributes(@dict.to_h)
+            rescue TypeError
+                # entities have already been deleted.  Don't do anything 
+            end
             htmlWriter.delete_file
         }
     
