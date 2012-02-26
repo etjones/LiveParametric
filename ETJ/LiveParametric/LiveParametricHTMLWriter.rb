@@ -30,9 +30,9 @@ class LiveParametricHTMLWriter
 	end
 	
     def htmlStr(controlDictArr)
-        # HTML 5 header, since we use HTML 5 sliders
         buildStr = <<-EOS
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" 
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
 #{headerCode(controlDictArr)}
 #{bodyCode(controlDictArr)}
