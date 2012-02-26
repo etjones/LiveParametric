@@ -18,57 +18,97 @@ class Slider < VariableDict
     def val
         @curVal
     end
-    def setVal( val)
-        if integerOnly
-            @curVal = val.to_i
-        else
-            @curVal = val.to_f
-        end
-    end
-    def headerCode
-        return []
-    end
+
+	def setVal( val)
+		if integerOnly
+			@curVal = val.to_i
+		else
+			@curVal = val.to_f
+		end
+	end
+	
+	def headerCode
+		[	%Q~<script src="../javascripts/scriptaculous/prototype.js" type="text/javascript"></script>~,
+			%Q~<script src="../javascripts/scriptaculous/slider.js" 	 type="text/javascript"></script>~,
+        	cssStr
+		]
+	end
+
+	def cssStr 
+		<<-EOS
+		<style type="text/css">
+		/* put the left rounded edge on the track */
+		div.track-left {
+			position: absolute;
+			width: 5px;
+			height: 20px;
+			background: transparent url(../images/slider-images-track-left.png) no-repeat top left;
+		}
+		/* put the track and the right rounded edge on the track */
+		div.track {
+			background: transparent url(../images/slider-images-track-right.png) no-repeat top right;
+		}
+		div.handle {
+			width: 19px;
+			height: 20px;
+			background: url(../images/slider-images-handle.png);
+			float: left;
+			cursor:move;
+		}
+		</style>
+		EOS
+	end
+
     def to_html
         sliderWidth = @html_width -25
 
+        # This code puts the javascript for a slider directly after the code for its
+        # appearance. Scriptaculous's comments warn that this may create problems
+        # when used with IE.  Be warned, should problems arise - ETJ 24-Jul-2007
         title = varTitle
-        sliderId = unique_id+"_slider"
+        cur = sprintf("%.2f",curVal)
+        min = sprintf("%.2f",minVal)
+        max = sprintf("%.2f",maxVal)
 
-        textW = Math::log10( maxVal).ceil + ( minVal < 0 ? 1 : 0) + 1
+       
+        slider_id = unique_id+"_slider"
+        left_id   = unique_id+"_left"
+        handle_id = unique_id+"_handle"
+
         if integerOnly
             cur = curVal.to_i
             min = minVal.to_i
             max = maxVal.to_i
-            rValStr = 'Number(this.value).toFixed(0)' 
-            stepStr = ''
-        else
-            cur = sprintf("%.2f",curVal)
-            min = sprintf("%.2f",minVal)
-            max = sprintf("%.2f",maxVal)            
-            rValStr = 'Number(this.value).toFixed(2)'
-            stepStr = "step='#{(maxVal-minVal)/20.0}'"
-            textW += 3
-        end
-        minMaxStr = ''
-        if showMinMax
-            minMaxStr = %Q{\n        <tr><td align ="left">#{min}</td><td align="right">#{max}</td></tr>\n}
-        end
-        dgb = "document.getElementById"
-        sliderChangeStr = %Q{onChange="#{dgb}('#{unique_id}').value = #{rValStr}; did_change('#{unique_id}', #{rValStr})"}
-        textChangeStr   = %Q{onChange="#{dgb}('#{sliderId}' ).value = #{rValStr}; did_change('#{unique_id}', #{rValStr})"}
-    
+			rValStr = 'v.toFixed(0)' 
+		end
+		
+		onChangeStr = %Q~function(v) { 
+			$('#{unique_id}').innerHTML = #{rValStr};
+			did_change('#{unique_id}', $('#{unique_id}').innerHTML);
+		}\n~
+   
         sliderStr = <<-EOS
         <table border="0" width=#{sliderWidth}px align="center">
-        <tr><td align ="left">#{title}:</td>
-            <td align="right"> 
-                <input type="text" id="#{unique_id}" size="#{textW}" value="#{cur}" #{textChangeStr}">
-            </td>        
-        </tr>
-        <tr><td colspan="2" align="center">
-            <input type="range" id="#{sliderId}" value="#{cur}" min="#{min}" max="#{max}" #{stepStr} #{sliderChangeStr}/>
-        </td></tr>#{minMaxStr}
+        <tr><td align ="left">#{title}:</td><td align="right"id="#{unique_id}">#{cur}</td></tr>
+        <tr><td colspan="2">
+        	<div 	 id="#{slider_id}" 	class="track"  style="width:#{sliderWidth}px; height:20px">
+       			<div id="#{left_id}" 	class="track-left"></div>
+       			<div id="#{handle_id}" 	class="handle" style="float:left"></div>
+       		</div>
+        </td></tr>
+        <tr><td align ="left">#{min}</td><td align="right">#{max}</td></tr>
         </table>
 
+        <script type="text/javascript" language="javascript">
+        // horizontal slider control
+        new Control.Slider('#{handle_id}', '#{slider_id}', {
+            range: $R(#{min},#{max}),
+            sliderValue: #{cur} ,
+            onSlide:  #{onChangeStr},
+            onChange: #{onChangeStr}
+        }
+        );
+        </script>
         EOS
 
         sliderStr
