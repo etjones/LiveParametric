@@ -11,8 +11,10 @@ class Slider < VariableDict
         @integerOnly = integerOnly
         @showMinMax = showMinMax
         
-        @html_width = 175
-        @html_height = 60
+        @html_width = 200
+        @html_height = 55
+        
+        @html_height += 20 if showMinMax
 
     end
     def val
@@ -29,7 +31,7 @@ class Slider < VariableDict
 	
 	def headerCode
 		[	%Q~<script src="../javascripts/scriptaculous/prototype.js" type="text/javascript"></script>~,
-			%Q~<script src="../javascripts/scriptaculous/slider.js" 	 type="text/javascript"></script>~,
+			%Q~<script src="../javascripts/scriptaculous/slider.js"    type="text/javascript"></script>~,
         	cssStr
 		]
 	end
@@ -74,7 +76,7 @@ class Slider < VariableDict
         slider_id = unique_id+"_slider"
         left_id   = unique_id+"_left"
         handle_id = unique_id+"_handle"
-
+        rValStr = 'v.toFixed(2)'
         if integerOnly
             cur = curVal.to_i
             min = minVal.to_i
@@ -86,7 +88,12 @@ class Slider < VariableDict
 			$('#{unique_id}').innerHTML = #{rValStr};
 			did_change('#{unique_id}', $('#{unique_id}').innerHTML);
 		}\n~
-   
+        
+        minMaxStr = ""
+        if showMinMax
+            minMaxStr = %Q{\n        <tr><td align ="left">#{min}</td><td align="right">#{max}</td></tr>\n}
+        end
+        
         sliderStr = <<-EOS
         <table border="0" width=#{sliderWidth}px align="center">
         <tr><td align ="left">#{title}:</td><td align="right"id="#{unique_id}">#{cur}</td></tr>
@@ -95,8 +102,7 @@ class Slider < VariableDict
        			<div id="#{left_id}" 	class="track-left"></div>
        			<div id="#{handle_id}" 	class="handle" style="float:left"></div>
        		</div>
-        </td></tr>
-        <tr><td align ="left">#{min}</td><td align="right">#{max}</td></tr>
+        </td></tr>#{minMaxStr}
         </table>
 
         <script type="text/javascript" language="javascript">
